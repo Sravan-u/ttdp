@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-// Use environment variable or fallback to localhost for dev
+// Use environment variable or fallback to Render backend for production
 const BASE_URL = process.env.REACT_APP_API_URL || 'https://ttdp-6.onrender.com/api';
 
 const api = axios.create({ baseURL: BASE_URL });
 
+// Interceptor for token if present (optional, won't fail if no auth)
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
