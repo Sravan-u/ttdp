@@ -1,27 +1,22 @@
 import axios from 'axios';
 
-// Use environment variable or fallback to live backend
+// Use environment variable or fallback to localhost for dev
 const BASE_URL = process.env.REACT_APP_API_URL || 'https://ttdp-6.onrender.com/api';
 
 const api = axios.create({ baseURL: BASE_URL });
 
-// Interceptor to send token if available (optional for auth routes)
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// =========================
 // Auth
-// =========================
 export const registerUser = (data) => api.post('/auth/register', data);
 export const loginUser = (data) => api.post('/auth/login', data);
 export const adminLogin = (data) => api.post('/auth/admin/login', data);
 
-// =========================
-// Parking (now public for testing)
-// =========================
+// Parking
 export const getAllSlots = () => api.get('/parking');
 export const getAvailableSlots = () => api.get('/parking/available');
 export const bookSlot = (slotId) => api.post(`/parking/book/${slotId}`);
@@ -29,9 +24,7 @@ export const releaseSlot = (slotId) => api.post(`/parking/release/${slotId}`);
 export const getMyBooking = () => api.get('/parking/my-booking');
 export const getMyHistory = () => api.get('/parking/my-history');
 
-// =========================
 // Admin
-// =========================
 export const getAdminStats = () => api.get('/admin/stats');
 export const getAllUsers = () => api.get('/admin/users');
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
