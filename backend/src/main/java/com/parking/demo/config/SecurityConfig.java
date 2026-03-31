@@ -25,21 +25,24 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    // Password encoder bean
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // Apply CORS configuration
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless JWT
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/parking/**").authenticated()
+                .requestMatchers("/api/auth/**").permitAll() // Public routes for auth
+                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Admin only
+                .requestMatchers("/api/parking/**").authenticated() // Authenticated users
                 .requestMatchers("/api/bookings/**").authenticated()
                 .anyRequest().authenticated()
             )
@@ -48,16 +51,29 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
+
+        // Allowed frontend URLs (production + Vercel preview)
+        config.setAllowedOrigins(List.of(
+            "https://ttdp.vercel.app",
+            "https://ttdp-git-main-23eg105b62-4283s-projects.vercel.app"
+        ));
+
+        // Allowed HTTP methods
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Allowed headers
         config.setAllowedHeaders(List.of("*"));
+
+        // Allow credentials (JWT headers)
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }

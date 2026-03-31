@@ -19,7 +19,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # =========================
-# Stage 2: Create lightweight runtime image
+# Stage 2: Create lightweight runtime imagea
 # =========================
 FROM eclipse-temurin:21-jdk-jammy
 
