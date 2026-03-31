@@ -1,18 +1,14 @@
-FROM openjdk:17
+# Use Java 21 (matches your system)
+FROM eclipse-temurin:21-jdk
 
+# Set working directory
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy project files
+COPY . .
 
-RUN chmod +x mvnw
-RUN ./mvnw dependency:go-offline
-
-COPY src src
-
+# Build the Spring Boot app
 RUN ./mvnw clean package -DskipTests
 
-EXPOSE 8080
-
+# Run the jar file
 CMD ["java", "-jar", "target/*.jar"]
